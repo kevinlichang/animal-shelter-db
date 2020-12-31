@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">NASD</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/shelters/">Shelters</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/animals/">Animals</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/fosters/">Fosters</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/cages/">Cages</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/trainers/">Trainers</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4 text-center">Cages</h1>
+    <button type="button" class="btn btn-primary align-middle" data-toggle="modal" data-target="#addCage">Add Cage</button>
+  </div>
+  <div class="modal fade" id="addCage" tableindex="-1" role="dialog" aria-labelledby="addCageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCageTitle">Add Cage</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="mb-2" id="addCageForm" action="/cages/" method="post">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="cageShelterID">Shelter Names</label>
+                <select name="cageShelterID" id="cageShelterID" class="custom-select">
+                  <option selected>--Choose the shelter where the cage is located--</option>
+                  {% for shelter in shelterData%}
+                    <option value="{{shelter[0]}}"> {{shelter[1]}} </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="cageLocation">Cage Location in Shelter</label>
+                <input type="text" class="form-control" id="cageLocation" name="cageLocation">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-5">
+                <label for="cageName">Cage Name</label>
+                <input type="text" class="form-control" id="cageName" name="cageName">
+              </div>
+              <div class="form-group col-md-5">
+                <label for="animalType">Animal Type</label>
+                  <select type="text" name="cageAnimalType" class="form-control" id="cageAnimalType" required>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>                        
+                  </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="cageCapacity">Capacity</label>
+                <input type="number" class="form-control" id="cageCapacity" name="cageCapacity">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>  
+              <button type="submit" class="btn btn-primary" id="addCageBtn">Add Cage</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <hr>
+  <h3>List of Cages</h3>
+  <table class="table table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Shelter</th>
+        <th scope="col">Cage Location in Shelter</th>
+        <th scope="col">Cage Name</th>
+        <th scope="col">Animal Type</th>
+        <th scope="col">Capacity</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cage in allCages%}
+      <!-- Display Results in table -->
+      <tr>
+        <td>{{cage[1]}}</td>
+        <td>{{cage[2]}}</td>
+        <td>{{cage[3]}}</td>
+        <td>{{cage[4]}}</td>
+        <td>{{cage[5]}}</td>
+        <td><button class="btn btn-outline-success" data-toggle="modal" data-target="#updateModal-{{cage[0]}}">Update/Delete</button></td>
+      </tr> 
+
+      <!-- Modal for Update or Delete -->
+      <div class="modal fade" id="updateModal-{{cage[0]}}" tabindex="-1" aria-labelledby="updateModalLabel-{{cage[0]}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="updateModalLabel-{{cage[0]}}">Update Cage</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>              
+            <form method="post">
+              <div class="modal-body">
+                
+                <input type="hidden" name="cage_id" value="{{cage[0]}}">
+
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label for="cageShelterID">Shelter Names</label>
+                    <select name="cageShelterID" class="custom-select" required>
+                      <option value="{{cage[6]}}" selected>{{cage[1]}}</option>
+                      {% for shelter in shelterData%}
+                        <option value="{{shelter[0]}}"> {{shelter[1]}} </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label for="cageLocation">Cage Location in Shelter</label>
+                    <input type="text" class="form-control" name="cageLocation" value="{{cage[2]}}">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-5">
+                    <label for="cageName">Cage Name</label>
+                    <input type="text" class="form-control" name="cageName" value="{{cage[3]}}" required>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <label for="cageAnimalType">Animal Type</label>
+                      <select type="text" name="cageAnimalType" class="form-control" id="cageAnimalType" required>
+                        <option value="{{cage[4]}}" selected>{{cage[4]}}</option>
+                        {% if cage[4] != "Dog"%}
+                          <option value="Dog">Dog</option>
+                        {% endif %}
+                        {% if cage[4] != "Cat"%}
+                          <option value="Cat">Cat</option>
+                        {% endif %}                          
+                      </select>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="cageCapacity">Capacity</label>
+                    <input type="number" class="form-control" name="cageCapacity" value="{{cage[5]}}">  
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" formaction="/cages/update/{{cage[0]}}">Save Update</button>
+                <button type="submit" class="btn btn-danger" formaction="/cages/delete/{{cage[0]}}">Delete Cage</button>   
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock content %}

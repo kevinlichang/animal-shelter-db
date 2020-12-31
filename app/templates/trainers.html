@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">NASD</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/shelters/">Shelters</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/animals/">Animals</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/fosters/">Fosters</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/cages/">Cages</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/trainers/">Trainers</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4 text-center">Trainer</h1>
+    <p class="lead text-center">Click a name to see more information.</p>
+    <button type="button" class="btn btn-primary align-middle" data-toggle="modal" data-target="#addTrainer">Add Trainer</button>
+  </div>
+  <div class="modal fade" id="addTrainer" tabindex="-1" role="dialog" aria-labelledby="addTrainer" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Trainer</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="mb-2" id="addTrainerForm" action="/trainers/" method="post">
+            <h3>Add Trainer</h3>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="trainerFName">First Name</label>
+                <input type="text" class="form-control" id="trainerFName" name="trainerFName">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="trainerLName">Last Name</label>
+                <input type="text" class="form-control" id="trainerLName" name="trainerLName">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="trainerSpecialty">Specialty</label>
+                  <select type="text" name="trainerSpecialty" class="form-control" id="trainerSpecialty" required>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>                
+                  </select>
+              </div>      
+            </div>
+        
+            <!-- For adding to Shelter Trianer MM table-->
+            <div class="form-group">
+              <label for="trainerShelterID">Add Shelter located (optional)</label>
+              <select name="trainerShelterID" class="custom-select">
+                <option value=" " selected>--Choose Shelter (optional)--</option>
+                {% for shelter in sheltersData%}
+                  <option value="{{shelter[0]}}">{{shelter[1]}} IN {{shelter[2]}}, {{shelter[3]}}</option>
+                {% endfor %}
+              </select>
+            </div>
+              <!-- <div class="form-group col-md-5">
+                <label for="animalTrainerID">Add Animal (optional)</label>
+                <select name="animalTrainerID" class="custom-select">
+                  <option value=" " selected>--Choose Animal (optional)--</option>
+                  {% for animal in animalsData%}
+                    <option value="{{animal[0]}}"> {{animal[1]}}</option>
+                  {% endfor %}
+                </select>
+              </div> -->
+            
+        
+            <button type="submit" class="btn btn-primary" id="addTrainerBtn">Add Trainer</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  
+
+  <hr>
+  
+  <h3>List of Trainers (by last name)</h3>
+  <table class="table table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Specialty</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for trainer in allTrainers %}
+
+        <tr>
+          <td><a href="/trainerProfile/{{trainer[0]}}">{{trainer[2]}}, {{trainer[1]}}</a>
+          <td>{{trainer[3]}}</td>
+          <td>
+          </td>
+
+          <td>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteTrainerModal-{{trainer[0]}}">
+              Delete
+            </button>
+          </td>
+        </tr>
+
+        <!--Delete Modal -->
+        <div class="modal fade" id="deleteTrainerModal-{{trainer[0]}}" tabindex="-1" aria-labelledby="deleteTrainerModalLabel-{{trainer[0]}}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteTrainerModalLabel-{{trainer[0]}}">Delete Trainer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                You sure you want to remove this trainer?
+              </div>
+              <div class="modal-footer">
+                <form action="/trainers/delete/{{trainer[0]}}" method="post">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>  
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock content %}
