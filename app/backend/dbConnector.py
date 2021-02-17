@@ -1,10 +1,22 @@
-import MySQLdb as mariadb
-from db_credentials import host, user, passwd, db
+import mariadb
+import sys
+from db_credentials import host, user, passwd, db, port
 
 ''' Connects to database and returns database object'''
-def connectDB(host = host, user = user, passwd = passwd, db = db):
-    connection = mariadb.connect(host, user, passwd, db)
-    return connection
+def connectDB(user = user, passwd = passwd, host = host, port = port, db = db):
+    # connection = mariadb.connect(user, passwd, host, port, db)
+    try:
+        conn = mariadb.connect(
+            user=user,
+            password=passwd,
+            host="localhost",
+            port=3306,
+            db=db)
+        return conn    
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    
 
 '''Executes passed SQL query with passed db connection and returns a Cursor object'''
 def executeQuery(dbConnection = None, query = None, query_params = ()):
@@ -29,5 +41,5 @@ def executeQuery(dbConnection = None, query = None, query_params = ()):
     #Commit changes to database
     cursor.execute(query, query_params)
 
-    dbConnection.commit()
+    # dbConnection.commit()
     return cursor
